@@ -1,7 +1,7 @@
-import { useTheme } from '@emotion/react'
 import { get, range } from 'lodash-es'
 import { ThemeValue } from '../../types/css'
 import { SelectInput } from '../inputs/SelectInput'
+import { useTheme } from '../providers/ThemeContext'
 import { length } from './primitives'
 import { DataTypeSchema } from './types'
 
@@ -16,12 +16,19 @@ export function theme(path: string): DataTypeSchema<ThemeValue> {
         typeof value.index === 'number'
       )
     }) as any,
-    stringify(value, theme) {
+    // XXX: Theme isn't being passed here
+    stringify(value, theme = {}) {
+      const path = `${value.path}.${value.index}`
+      console.log({ theme })
+      console.log(value, path)
+      console.log(get(theme, path))
+      console.log('------------')
       return get(theme, `${value.path}.${value.index}`)
     },
     inlineInput(props) {
       const theme = useTheme()
       const numOptions = get(theme, path).length
+
       return (
         <SelectInput
           label=""
